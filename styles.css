@@ -1,0 +1,14 @@
+body {
+  margin: 0px;
+}
+
+#root {
+  display: flex;
+  height: 100vh;
+}
+
+.App {
+  font-family: sans-serif;
+  text-align: center;
+}
+
