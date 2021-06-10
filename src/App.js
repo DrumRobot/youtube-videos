@@ -10,12 +10,31 @@ import YouTubeIcon from "@material-ui/icons/YouTube";
 import React, { useState } from "react";
 import "./styles.css";
 
+const resources = {
+  headerText: "YouTube 재생목록 자동생성",
+  titleLabel: "제목",
+  titlePlaceholder: "재생목록의 제목을 입력하세요.",
+  textAreaPlaceholder:
+    "재생목록에 들어갈 영상의 링크를 전부 붙여넣기 하세요. 링크 외에 다른 텍스트가 섞여 들어가도 무방하며 엔터, 띄어쓰기, 콤마 등으로 구분하세요.",
+  resultExampleTitle: "예시:",
+  resultExampleText: [
+    "[홍길동] [오후 12:38] https://youtu.be/XXXXXXXXXXX",
+    "https://www.youtube.com/watch?v=YYYYYYYYYYY,https://www.youtube.com/watch?v=ZZZZZZZZZZZ",
+  ],
+  resultTitle: "자동생성 주소:",
+  resultHelpText: [
+    "* 마우스 오른쪽 버튼을 클릭하여 링크 복사를 선택하세요",
+    "(YouTube 화면에서 공유해버리면 시간이 지나면 사라집니다.)",
+  ],
+};
+
 const useStyles = makeStyles({
   root: {
     display: "flex",
     flexDirection: "column",
     gap: "1em",
     padding: "2em 1em",
+    width: "100%",
     "@media screen and (min-width: 800px)": {
       margin: "0 auto",
       maxWidth: "800px",
@@ -38,12 +57,17 @@ const useStyles = makeStyles({
     margin: "20px",
     padding: "0 30px",
   },
+  result: {
+    whiteSpace: "pre-line",
+    overflowWrap: "break-word",
+  },
 });
 
 export default function App() {
   const classes = useStyles();
   const [title, setTitle] = useState();
   const [playlist, setPlayList] = useState();
+  const [label, setLabel] = useState(resources.titleLabel);
   const [url, setUrl] = useState();
 
   function onSubmit() {
@@ -69,43 +93,38 @@ export default function App() {
 
   return (
     <Box className={`App ${classes.root}`} boxShadow={1}>
-      <h1>
+      <h2>
         <YouTubeIcon />
-        YouTube 재생목록 자동생성
-      </h1>
+        {resources.headerText}
+      </h2>
       <TextField
         className={classes.titleField}
-        label="제목"
         onChange={(e) => setTitle(e.target.value)}
-        placeholder="재생목록의 제목을 입력하세요."
+        label={label}
+        placeholder={resources.titlePlaceholder}
         size={800}
         value={title}
       />
       <TextareaAutosize
         className={classes.playlistArea}
         onChange={(e) => setPlayList(e.target.value)}
-        placeholder="재생목록에 들어갈 영상의 링크를 전부 붙여넣기 하세요. 링크 외에 다른 텍스트가 섞여 들어가도 무방합니다."
+        placeholder={resources.textAreaPlaceholder}
         value={playlist}
       />
-      <Typography>
-        <h3>예시:</h3>
-        [홍길동] [오후 12:38] https://youtu.be/XXXXXXXXXXX
-        <br />
-        https://www.youtube.com/watch?v=YYYYYYYYYYY,
-        https://www.youtube.com/watch?v=ZZZZZZZZZZZ
-      </Typography>
-      <Button className={classes.submit} onClick={onSubmit}>
-        링크 생성하기
-      </Button>
-      {url && (
-        <div>
-          <h2>자동생성 주소:</h2>
+      {url ? (
+        <div className={classes.result}>
+          <h3>{resources.resultTitle}</h3>
           <a href={url} rel="noreferrer" target="_blank">
             {url}
           </a>
-          <br />
-          <br />* 마우스 오른쪽 버튼을 클릭하여 링크 복사를 선택하세요
+          {"\n"}
+          {resources.resultHelpText.join("\n")}
         </div>
+      ) : (
+        <Typography className={classes.result}>
+          <h3>{resources.resultExampleTitle}</h3>
+          {resources.resultExampleText.join("\n")}
+        </Typography>
       )}
     </Box>
   );
