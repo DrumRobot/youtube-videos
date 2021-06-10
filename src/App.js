@@ -15,7 +15,7 @@ const useStyles = makeStyles({
     display: "flex",
     flexDirection: "column",
     gap: "1em",
-    padding: "1em",
+    padding: "2em 1em",
     "@media screen and (min-width: 800px)": {
       margin: "0 auto",
       maxWidth: "800px",
@@ -26,6 +26,7 @@ const useStyles = makeStyles({
   },
   playlistArea: {
     flex: "10em",
+    minHeight: "2em",
   },
   submit: {
     background: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
@@ -34,6 +35,7 @@ const useStyles = makeStyles({
     boxShadow: "0 3px 5px 2px rgba(255, 105, 135, .3)",
     color: "white",
     height: 48,
+    margin: "20px",
     padding: "0 30px",
   },
 });
