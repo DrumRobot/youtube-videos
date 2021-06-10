@@ -7,7 +7,7 @@ import {
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import YouTubeIcon from "@material-ui/icons/YouTube";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import "./styles.css";
 
 const resources = {
@@ -24,7 +24,7 @@ const resources = {
   resultTitle: "자동생성 주소:",
   resultHelpText: [
     "* 마우스 오른쪽 버튼을 클릭하여 링크 복사를 선택하세요",
-    "(YouTube 화면에서 공유해버리면 시간이 지나면 사라집니다.)",
+    "(YouTube 화면에서 공유하는 주소는 시간이 지나면 사라집니다.)",
   ],
 };
 
@@ -65,16 +65,39 @@ const useStyles = makeStyles({
 
 export default function App() {
   const classes = useStyles();
-  const [title, setTitle] = useState();
-  const [playlist, setPlayList] = useState();
   const [label, setLabel] = useState(resources.titleLabel);
+  const [isTitleEntered, setTitleEntered] = useState();
+  var [title, setTitle] = useState();
+  var [playlist, setPlayList] = useState();
   const [url, setUrl] = useState();
+  const re = new RegExp(
+    "(https://www.youtube.com/watch.v=|https://youtu.be/)(\\S{11})",
+    "g"
+  );
 
-  function onSubmit() {
-    let re = new RegExp(
-      "(https://www.youtube.com/watch.v=|https://youtu.be/)(\\S{11})",
-      "g"
-    );
+  const onChange = useCallback(
+    (e) => {
+      let text = e.target.value;
+      setPlayList((playlist = text));
+      let first = text.split("\n")[0].trim();
+      if (!isTitleEntered && !re.test(first)) {
+        setLabel("");
+        setTitle((title = first));
+      }
+      createLink();
+    },
+    [isTitleEntered, label, playlist, title, url]
+  );
+
+  const onTitleChange = useCallback(
+    (e) => {
+      setTitle((title = e.target.value));
+      setTitleEntered(true);
+      createLink();
+    }
+  );
+
+  function createLink() {
     var ids = [];
     console.log(playlist);
     var m;
@@ -84,8 +107,10 @@ export default function App() {
       if (id) ids.push(id);
     }
     ids = ids.join(",");
-    var url = `http://www.youtube.com/watch_videos?video_ids=${ids}`;
-    if (title) {
+    var url = ids
+      ? `http://www.youtube.com/watch_videos?video_ids=${ids}`
+      : null;
+    if (url && title) {
       url += "&title=" + encodeURI(title);
     }
     setUrl(url);
@@ -99,15 +124,15 @@ export default function App() {
       </h2>
       <TextField
         className={classes.titleField}
-        onChange={(e) => setTitle(e.target.value)}
         label={label}
+        onChange={onTitleChange}
         placeholder={resources.titlePlaceholder}
         size={800}
         value={title}
       />
       <TextareaAutosize
         className={classes.playlistArea}
-        onChange={(e) => setPlayList(e.target.value)}
+        onChange={onChange}
         placeholder={resources.textAreaPlaceholder}
         value={playlist}
       />
